@@ -60,6 +60,8 @@ async def async_setup_entry(
         cert = False
     encrypt_password = config.get(CONFIG_ENCRYPT_PASSWORD)
     api = ActualBudget(hass, endpoint, password, file, cert, encrypt_password)
+    config_entry.api = api
+    
     unique_source_id = await api.get_unique_id()
 
     accounts = await api.get_accounts()
@@ -287,7 +289,6 @@ class actualbudgetBudgetSensor(SensorEntity):
     def icon(self):
         return self._icon
 
-
     @property
     def state(self) -> float | None:
         total = 0
@@ -299,7 +300,8 @@ class actualbudgetBudgetSensor(SensorEntity):
     @property
     def extra_state_attributes(self) -> Dict[str, Union[str, float]]:
         extra_state_attributes = {}
-        amounts = [amount for amount in self._amounts if datetime.datetime.strptime(amount.month, '%Y%m') <= datetime.datetime.now()]
+        amounts = [amount for amount in self._amounts if datetime.datetime.strptime(
+            amount.month, '%Y%m') <= datetime.datetime.now()]
         current_month = amounts[-1].month
         if current_month:
             extra_state_attributes["current_month"] = current_month
