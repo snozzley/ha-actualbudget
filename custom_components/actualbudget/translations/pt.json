@@ -10,6 +10,7 @@
           "password": "palavra-passe",
           "encrypt_password": "palavra-passe de encriptação",
           "file": "id do ficheiro",
+          "validate_cert": "validar certificado",
           "cert": "certificado",
           "unit": "moeda"
         },
@@ -18,6 +19,7 @@
           "password": "A palavra-passe do servidor actualbudget",
           "encrypt_password": "A palavra-passe para encriptar o ficheiro actualbudget",
           "file": "O id do ficheiro do servidor actualbudget",
+          "validate_cert": "Se of certificado deve ser validado. Desmarque para ignorar validação",
           "cert": "O certificado do servidor actualbudget, escreva 'SKIP' para ignorar a validação do certificado",
           "unit": "A moeda do servidor/ficheiro actualbudget"
         }

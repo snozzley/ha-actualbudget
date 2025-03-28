@@ -53,10 +53,17 @@ class ActualBudget:
         self.cert = cert
         self.encrypt_password = encrypt_password
         self.actual = None
+        self.file_id = None
         self.sessionStartedAt = datetime.datetime.now()
         self._lock = threading.Lock()
 
-    """ Get Actual session if it exists """
+    async def get_unique_id(self):
+        """Gets a unique id for the sensor based on the remote `file_id`."""
+        return await self.hass.async_add_executor_job(self.get_unique_id_sync)
+
+    def get_unique_id_sync(self):
+        self.get_session()
+        return self.file_id
 
     def get_session(self):
         """Get Actual session if it exists, or create a new one safely."""
@@ -102,6 +109,7 @@ class ActualBudget:
         result = actual.validate()
         if not result.data.validated:
             raise Exception("Session not validated")
+        self.file_id = actual._file.file_id
         return actual
 
     async def get_accounts(self) -> List[Account]:
