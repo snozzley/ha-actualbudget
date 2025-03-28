@@ -29,7 +29,7 @@ from .const import (
     CONFIG_UNIT,
     CONFIG_CERT,
     CONFIG_ENCRYPT_PASSWORD,
-    CONFIG_VALIDATE_CERT,
+    CONFIG_SKIP_VALIDATE_CERT,
 )
 from .actualbudget import ActualBudget, BudgetAmount
 
@@ -52,11 +52,11 @@ async def async_setup_entry(
     password = config[CONFIG_PASSWORD]
     file = config[CONFIG_FILE]
     cert = config.get(CONFIG_CERT)
-    validate_cert = config[CONFIG_VALIDATE_CERT]
+    skip_validate_cert = config[CONFIG_SKIP_VALIDATE_CERT]
     unit = config.get(CONFIG_UNIT, "€")
     prefix = config.get(CONFIG_PREFIX)
 
-    if not validate_cert:
+    if not skip_validate_cert:
         cert = False
     encrypt_password = config.get(CONFIG_ENCRYPT_PASSWORD)
     api = ActualBudget(hass, endpoint, password, file, cert, encrypt_password)

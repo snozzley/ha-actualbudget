@@ -15,7 +15,7 @@ from .const import (
     CONFIG_PASSWORD,
     CONFIG_FILE,
     CONFIG_CERT,
-    CONFIG_VALIDATE_CERT,
+    CONFIG_SKIP_VALIDATE_CERT,
     CONFIG_ENCRYPT_PASSWORD,
     CONFIG_UNIT,
     CONFIG_PREFIX,
@@ -30,7 +30,7 @@ DATA_SCHEMA = vol.Schema(
         vol.Required(CONFIG_PASSWORD): str,
         vol.Required(CONFIG_FILE): str,
         vol.Required(CONFIG_UNIT, default="€"): str,
-        vol.Boolean(CONFIG_VALIDATE_CERT, default=True): bool,
+        vol.Boolean(CONFIG_SKIP_VALIDATE_CERT): bool,
         vol.Optional(CONFIG_CERT): str,
         vol.Optional(CONFIG_ENCRYPT_PASSWORD): str,
         vol.Optional(CONFIG_PREFIX, default="actualbudget"): str,
@@ -60,9 +60,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         password = user_input[CONFIG_PASSWORD]
         file = user_input[CONFIG_FILE]
         cert = user_input.get(CONFIG_CERT)
-        validate_cert = user_input[CONFIG_VALIDATE_CERT]
+        skip_validate_cert = user_input.get(CONFIG_SKIP_VALIDATE_CERT, True)
         encrypt_password = user_input.get(CONFIG_ENCRYPT_PASSWORD)
-        if not validate_cert:
+        if not skip_validate_cert:
             cert = False
 
         await self.async_set_unique_id(unique_id)
