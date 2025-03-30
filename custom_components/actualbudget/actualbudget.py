@@ -104,8 +104,8 @@ class ActualBudget:
             encryption_password=self.encrypt_password,
             file=self.file,
         )
-        self.file_id = actual._file.file_id
-        actual._data_dir = pathlib.Path(self.hass.config.path(f"actualbudget/{self.file_id}"))
+        self.file_id = str(actual._file.file_id)
+        actual._data_dir = pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
