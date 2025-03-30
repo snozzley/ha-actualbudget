@@ -85,6 +85,8 @@ class ActualBudget:
                     result = self.actual.validate()
                     if not result.data.validated:
                         raise Exception("Session not validated")
+                    # sync local database
+                    self.actual.sync()
                 except Exception as e:
                     _LOGGER.error("Error validating session: %s", e)
                     self.actual = None
@@ -106,8 +108,7 @@ class ActualBudget:
         )
         self.file_id = str(actual._file.file_id)
         actual._data_dir = pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
-        _LOGGER.warning(actual._data_dir)
-        _LOGGER.warning(type(actual._data_dir))
+        _LOGGER.debug(f"Creating budget file on folder {actual._data_dir}")
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
