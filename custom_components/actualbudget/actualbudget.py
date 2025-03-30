@@ -4,7 +4,7 @@ from decimal import Decimal
 import logging
 from dataclasses import dataclass
 from typing import Dict, List
-from actual import Actual, ActualServer
+from actual import Actual
 from actual.exceptions import (
     UnknownFileId,
     InvalidFile,
@@ -106,6 +106,8 @@ class ActualBudget:
         )
         self.file_id = str(actual._file.file_id)
         actual._data_dir = pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
+        _LOGGER.warning(actual._data_dir)
+        _LOGGER.warning(type(actual._data_dir))
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
