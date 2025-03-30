@@ -4,7 +4,7 @@ from decimal import Decimal
 import logging
 from dataclasses import dataclass
 from typing import Dict, List
-from actual import Actual
+from actual import Actual, ActualServer
 from actual.exceptions import (
     UnknownFileId,
     InvalidFile,
@@ -103,13 +103,13 @@ class ActualBudget:
             cert=self.cert,
             encryption_password=self.encrypt_password,
             file=self.file,
-            data_dir=self.hass.config.path(f"actualbudget/{self.file_id}"),
         )
+        self.file_id = actual._file.file_id
+        actual._data_dir = self.hass.config.path(f"actualbudget/{self.file_id}")
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
             raise Exception("Session not validated")
-        self.file_id = actual._file.file_id
         return actual
 
     async def get_accounts(self) -> List[Account]:
