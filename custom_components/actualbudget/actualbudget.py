@@ -1,5 +1,5 @@
 """API to ActualBudget."""
-
+import pathlib
 from decimal import Decimal
 import logging
 from dataclasses import dataclass
@@ -105,7 +105,7 @@ class ActualBudget:
             file=self.file,
         )
         self.file_id = actual._file.file_id
-        actual._data_dir = self.hass.config.path(f"actualbudget/{self.file_id}")
+        actual._data_dir = pathlib.Path(self.hass.config.path(f"actualbudget/{self.file_id}"))
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
