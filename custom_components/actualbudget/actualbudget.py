@@ -103,7 +103,7 @@ class ActualBudget:
             cert=self.cert,
             encryption_password=self.encrypt_password,
             file=self.file,
-            data_dir=self.hass.config.path("actualbudget"),
+            data_dir=self.hass.config.path(f"actualbudget/{self.file_id}"),
         )
         actual.__enter__()
         result = actual.validate()
