@@ -1,4 +1,5 @@
 """API to ActualBudget."""
+
 import pathlib
 from decimal import Decimal
 import logging
@@ -89,17 +90,6 @@ class ActualBudget:
             except Exception as e:
                 _LOGGER.error("Error validating session: %s", e)
                 self.actual = None
-            # Validate existing session
-            if self.actual:
-                try:
-                    result = self.actual.validate()
-                    if not result.data.validated:
-                        raise Exception("Session not validated")
-                    # sync local database
-                    self.actual.sync()
-                except Exception as e:
-                    _LOGGER.error("Error validating session: %s", e)
-                    self.actual = None
         # Create a new session if needed
         if not self.actual:
             self.actual = self.create_session()
@@ -116,7 +106,9 @@ class ActualBudget:
             file=self.file,
         )
         self.file_id = str(actual._file.file_id)
-        actual._data_dir = pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
+        actual._data_dir = (
+            pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
+        )
         _LOGGER.debug(f"Creating budget file on folder {actual._data_dir}")
         actual.__enter__()
         result = actual.validate()
@@ -164,13 +156,17 @@ class ActualBudget:
                 if not budget_raw.category:
                     continue
                 category = str(budget_raw.category.name)
-                amount = None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                amount = (
+                    None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                )
                 month = str(budget_raw.month)
                 if category not in budgets:
                     budgets[category] = Budget(
                         name=category, amounts=[], balance=Decimal(0)
                     )
-                budgets[category].amounts.append(BudgetAmount(month=month, amount=amount))
+                budgets[category].amounts.append(
+                    BudgetAmount(month=month, amount=amount)
+                )
             for category in budgets:
                 budgets[category].amounts = sorted(
                     budgets[category].amounts, key=lambda x: x.month
@@ -198,7 +194,9 @@ class ActualBudget:
                 raise Exception(f"budget {budget_name} not found")
             budget: Budget = Budget(name=budget_name, amounts=[], balance=Decimal(0))
             for budget_raw in budgets_raw:
-                amount = None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                amount = (
+                    None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                )
                 month = str(budget_raw.month)
                 budget.amounts.append(BudgetAmount(month=month, amount=amount))
             budget.amounts = sorted(budget.amounts, key=lambda x: x.month)
