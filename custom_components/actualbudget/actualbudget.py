@@ -1,5 +1,6 @@
 """API to ActualBudget."""
 
+import pathlib
 from decimal import Decimal
 import logging
 from dataclasses import dataclass
@@ -53,10 +54,17 @@ class ActualBudget:
         self.cert = cert
         self.encrypt_password = encrypt_password
         self.actual = None
+        self.file_id = None
         self.sessionStartedAt = datetime.datetime.now()
         self._lock = threading.Lock()
 
-    """ Get Actual session if it exists """
+    async def get_unique_id(self):
+        """Gets a unique id for the sensor based on the remote `file_id`."""
+        return await self.hass.async_add_executor_job(self.get_unique_id_sync)
+
+    def get_unique_id_sync(self):
+        self.get_session()
+        return self.file_id
 
     def get_session(self):
         """Get Actual session if it exists, or create a new one safely."""
@@ -77,10 +85,11 @@ class ActualBudget:
                 result = self.actual.validate()
                 if not result.data.validated:
                     raise Exception("Session not validated")
+                # sync local database
+                self.actual.sync()
             except Exception as e:
                 _LOGGER.error("Error validating session: %s", e)
                 self.actual = None
-
         # Create a new session if needed
         if not self.actual:
             self.actual = self.create_session()
@@ -95,8 +104,12 @@ class ActualBudget:
             cert=self.cert,
             encryption_password=self.encrypt_password,
             file=self.file,
-            data_dir=self.hass.config.path("actualbudget"),
         )
+        self.file_id = str(actual._file.file_id)
+        actual._data_dir = (
+            pathlib.Path(self.hass.config.path("actualbudget")) / f"{self.file_id}"
+        )
+        _LOGGER.debug(f"Creating budget file on folder {actual._data_dir}")
         actual.__enter__()
         result = actual.validate()
         if not result.data.validated:
@@ -143,13 +156,17 @@ class ActualBudget:
                 if not budget_raw.category:
                     continue
                 category = str(budget_raw.category.name)
-                amount = None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                amount = (
+                    None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                )
                 month = str(budget_raw.month)
                 if category not in budgets:
                     budgets[category] = Budget(
                         name=category, amounts=[], balance=Decimal(0)
                     )
-                budgets[category].amounts.append(BudgetAmount(month=month, amount=amount))
+                budgets[category].amounts.append(
+                    BudgetAmount(month=month, amount=amount)
+                )
             for category in budgets:
                 budgets[category].amounts = sorted(
                     budgets[category].amounts, key=lambda x: x.month
@@ -177,7 +194,9 @@ class ActualBudget:
                 raise Exception(f"budget {budget_name} not found")
             budget: Budget = Budget(name=budget_name, amounts=[], balance=Decimal(0))
             for budget_raw in budgets_raw:
-                amount = None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                amount = (
+                    None if not budget_raw.amount else (float(budget_raw.amount) / 100)
+                )
                 month = str(budget_raw.month)
                 budget.amounts.append(BudgetAmount(month=month, amount=amount))
             budget.amounts = sorted(budget.amounts, key=lambda x: x.month)
