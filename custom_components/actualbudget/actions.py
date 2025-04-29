@@ -19,7 +19,8 @@ from .actualbudget import ActualBudget
 
 from .const import (
     DOMAIN,
-    ATTR_CONFIG_ENTRY_ID
+    ATTR_CONFIG_ENTRY_ID,
+    AKAHU_SYNC_DAYS
 )
 
 
@@ -64,6 +65,17 @@ def register_actions(hass: HomeAssistant) -> None:
             }
         )
     )
+    hass.services.async_register(
+        DOMAIN,
+        "akahu_bank_sync",
+        handle_akahu_bank_sync,
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_CONFIG_ENTRY_ID): str,
+                vol.Optional(AKAHU_SYNC_DAYS, default="20"): str,
+            }
+        )
+    )
 
 
 @callback
@@ -93,6 +105,26 @@ async def handle_budget_sync(call: ServiceCall) -> ServiceResponse:
     api = get_actualbudget_client(call.hass, call.data[ATTR_CONFIG_ENTRY_ID])
 
     await api.run_budget_sync()
+
+    entity_registry = async_get(call.hass)
+
+    # Update all account and budget entities
+    integration_entities = async_entries_for_config_entry(
+        entity_registry, call.data[ATTR_CONFIG_ENTRY_ID])
+
+    tasks = [
+        async_update_entity(call.hass, entity.entity_id) for entity in integration_entities
+    ]
+
+    if tasks:
+        await asyncio.gather(*tasks)
+
+@callback
+async def handle_akahu_bank_sync(call: ServiceCall) -> ServiceResponse:
+    """Handle the akahu_bank_sync service action call."""
+    api = get_actualbudget_client(call.hass, call.data[ATTR_CONFIG_ENTRY_ID])
+
+    await api.run_akahu_bank_sync(call.data[AKAHU_SYNC_DAYS])
 
     entity_registry = async_get(call.hass)
 

@@ -13,3 +13,16 @@ budget_sync:
       selector:
         config_entry:
           integration: actualbudget
+
+akahu_bank_sync:
+  fields:
+    sync_days:
+      required: false
+      description: "Number of days to sync, or 'ALL' for max available"
+      selector:
+        text:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: actualbudget

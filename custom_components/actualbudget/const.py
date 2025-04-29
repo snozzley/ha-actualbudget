@@ -12,5 +12,7 @@ CONFIG_PREFIX = "prefix"
 CONFIG_CERT = "cert"
 CONFIG_SKIP_VALIDATE_CERT = "skip_validate_cert"
 CONFIG_ENCRYPT_PASSWORD = "encrypt_password"
-
+CONFIG_AKAHU_APP_ID = "akahu_app_id"
+CONFIG_AKAHU_AUTH_TOKEN = "akahu_auth_token"
+AKAHU_SYNC_DAYS = "sync_days"
 ATTR_CONFIG_ENTRY_ID = "config_entry_id"
