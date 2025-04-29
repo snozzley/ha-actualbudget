@@ -54,6 +54,20 @@
           "description": "Select the Actual Budget instance to perform the budget sync on."
         }
       }
+    },
+    "akahu_bank_sync": {
+      "name": "Akahu Bank Sync",
+      "description": "Downloads latest transactions from Akahu bank accounts and inserts them into Actual Budget.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Actual Budget instance",
+          "description": "Select the Actual Budget instance to perform the bank sync on."
+        },
+        "sync_days": {
+          "name": "Number of days to sync",
+          "description": "How many days of data to sync. Or 'ALL' to sync max available. Defaults to 20 days"
+        }
+      }      
     }
   }
 }
