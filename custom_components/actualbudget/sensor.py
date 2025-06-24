@@ -57,12 +57,13 @@ async def async_setup_entry(
     skip_validate_cert = config[CONFIG_SKIP_VALIDATE_CERT]
     unit = config.get(CONFIG_UNIT, "€")
     prefix = config.get(CONFIG_PREFIX)
-    akahu_app_id = config.get(CONFIG_AKAHU_APP_ID)
-    akahu_auth_token = config.get(CONFIG_AKAHU_AUTH_TOKEN)
+    # Don't need this for the sensor?
+    #akahu_app_id = config.get(CONFIG_AKAHU_APP_ID)
+    #akahu_auth_token = config.get(CONFIG_AKAHU_AUTH_TOKEN)
     if not skip_validate_cert:
         cert = False
     encrypt_password = config.get(CONFIG_ENCRYPT_PASSWORD)
-    api = ActualBudget(hass, endpoint, password, file, cert, encrypt_password,akahu_app_id, akahu_auth_token)
+    api = ActualBudget(hass, endpoint, password, file, cert, encrypt_password,akahu_app_id="", akahu_auth_token="")
     config_entry.api = api
     
     unique_source_id = await api.get_unique_id()

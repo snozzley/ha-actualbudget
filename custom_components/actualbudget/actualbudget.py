@@ -227,9 +227,9 @@ class ActualBudget:
             self.actual.run_bank_sync()
             self.actual.commit()
 
-    async def run_akahu_bank_sync(self, syncdays) -> None:
+    async def run_akahu_bank_sync(self, sync_days, sync_categories) -> None:
         """Run Akahu bank synchronization."""
-        return await self.hass.async_add_executor_job(partial(self.run_akahu_bank_sync_sync,syncdays))
+        return await self.hass.async_add_executor_job(partial(self.run_akahu_bank_sync_sync,sync_days,sync_categories))
 
     def cleanup_meta(self, checkstring) -> str:
         # exclude cdn web/image links
@@ -240,13 +240,13 @@ class ActualBudget:
             return ""        
         return checkstring
     
-    def run_akahu_bank_sync_sync(self, syncdays) -> None:
+    def run_akahu_bank_sync_sync(self, sync_days, sync_categories) -> None:
         headers = {
             "accept": "application/json",
             "authorization": self.akahu_auth_token,
             "X-Akahu-Id": self.akahu_app_id
         }
-        _LOGGER.debug("run_akahu_bank_sync_sync - Syncing: %s",syncdays) 
+        _LOGGER.debug("run_akahu_bank_sync_sync - Syncing: %s",sync_days) 
         with self._lock:  # Ensure only one thread enters at a time
             session = self.get_session()
             ruleset = get_ruleset(session)
@@ -270,15 +270,15 @@ class ActualBudget:
             
                 # Default to last 20 days
                 startdate = (datetime.datetime.now() - datetime.timedelta(days = 20)).isoformat()
-                if(syncdays):
-                    if(syncdays.lower() == "all"):
+                if(sync_days):
+                    if(sync_days.lower() == "all"):
                         startdate =""
                     else:
                         try:
-                            int_syncdays = int(syncdays)
-                            startdate = (datetime.datetime.now() - datetime.timedelta(days = int_syncdays)).isoformat()
+                            int_sync_days = int(sync_days)
+                            startdate = (datetime.datetime.now() - datetime.timedelta(days = int_sync_days)).isoformat()
                         except ValueError:
-                            _LOGGER.warning("Could not parse Akahu Sync days (%s) - defaulting to 20", syncdays)                
+                            _LOGGER.warning("Could not parse Akahu Sync days (%s) - defaulting to 20", sync_days)                
                 
                 # Start with no cursor
                 trans_cursor = None 
@@ -319,14 +319,14 @@ class ActualBudget:
                                         trans_merchant_summary = merchant_meta
                                     else:
                                         trans_merchant_summary += "  " + merchant_meta                        
-
-                        if transaction.get("category"):                    
-                            # This first one is the specific (often _too_ specific) category name
-                            trans_category = transaction["category"]["name"]
-                            # Below gets the parent category group
-                            category_groups = transaction["category"]["groups"]
-                            group_names = [group["name"] for group in category_groups.values()]                                
-                            trans_category_parent = group_names[0]
+                        if sync_categories:
+                            if transaction.get("category"):                    
+                                # This first one is the specific (often _too_ specific) category name
+                                trans_category = transaction["category"]["name"]
+                                # Below gets the parent category group
+                                category_groups = transaction["category"]["groups"]
+                                group_names = [group["name"] for group in category_groups.values()]                                
+                                trans_category_parent = group_names[0]
                         
                         if transaction.get("meta"):
                             for key, value in transaction["meta"].items():

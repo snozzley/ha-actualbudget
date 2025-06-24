@@ -20,7 +20,8 @@ from .actualbudget import ActualBudget
 from .const import (
     DOMAIN,
     ATTR_CONFIG_ENTRY_ID,
-    AKAHU_SYNC_DAYS
+    AKAHU_SYNC_DAYS,
+    AKAHU_SYNC_CATEGORIES
 )
 
 
@@ -73,6 +74,7 @@ def register_actions(hass: HomeAssistant) -> None:
             {
                 vol.Required(ATTR_CONFIG_ENTRY_ID): str,
                 vol.Optional(AKAHU_SYNC_DAYS, default="20"): str,
+                vol.Optional(AKAHU_SYNC_CATEGORIES,default=False): bool,
             }
         )
     )
@@ -124,7 +126,7 @@ async def handle_akahu_bank_sync(call: ServiceCall) -> ServiceResponse:
     """Handle the akahu_bank_sync service action call."""
     api = get_actualbudget_client(call.hass, call.data[ATTR_CONFIG_ENTRY_ID])
 
-    await api.run_akahu_bank_sync(call.data[AKAHU_SYNC_DAYS])
+    await api.run_akahu_bank_sync(call.data[AKAHU_SYNC_DAYS],call.data[AKAHU_SYNC_CATEGORIES])
 
     entity_registry = async_get(call.hass)
 

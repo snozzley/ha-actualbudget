@@ -67,6 +67,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         encrypt_password = user_input.get(CONFIG_ENCRYPT_PASSWORD)
         akahu_app_id = user_input.get(CONFIG_AKAHU_APP_ID)
         akahu_auth_token = user_input.get(CONFIG_AKAHU_AUTH_TOKEN)
+        if not akahu_auth_token.startswith("bearer "):
+            akahu_auth_token = "bearer "+akahu_auth_token 
+
         if not skip_validate_cert:
             cert = False
         elif(cert == ""):

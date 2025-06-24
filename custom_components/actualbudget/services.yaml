@@ -21,6 +21,12 @@ akahu_bank_sync:
       description: "Number of days to sync, or 'ALL' for max available"
       selector:
         text:
+    sync_categories:
+      required: false
+      description: "Choose whether to allow auto syncing of categories from bank transactions in to Actual"
+      selector:
+        boolean:
+          default: false
     config_entry_id:
       required: true
       selector:

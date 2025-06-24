@@ -70,6 +70,10 @@
         "sync_days": {
           "name": "Number of days to sync",
           "description": "How many days of data to sync. Or 'ALL' to sync max available. Defaults to 20 days"
+        },
+        "sync_categories": {
+          "name": "Sync transaction categories",
+          "description": "Choose whether to allow auto syncing of categories from bank transactions in to Actual"
         }
       }
     }
