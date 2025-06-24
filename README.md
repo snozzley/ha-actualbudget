@@ -38,13 +38,15 @@ Note: If this is not in HACS yet, you can add this repository manually.
 3. Search for `Actual Budget`
 4. Enter the needed information
 
-| Setting       | Required | Description |
-| ------------- | --------- | ----------- |
-| Endpoint      | Yes       | The endpoint of the Actual Budget API |
-| Password      | Yes       | The password of the Actual Budget API |
-| Encrypt Password | No    | The password to decrypt the Actual Budget file (if set) |
-| File          | Yes       | The file id of the Actual Budget file |
-| Cert          | No        | The certificate to use for the connection, you can set it as 'SKIP' to ignore certificate validation|
+| Setting           | Required | Description |
+| -------------     | --------- | ----------- |
+| Endpoint          | Yes       | The endpoint of the Actual Budget API |
+| Password          | Yes       | The password of the Actual Budget API |
+| Encrypt Password  | No    | The password to decrypt the Actual Budget file (if set) |
+| File              | Yes       | The file id of the Actual Budget file - Can just be the text name, typically 'My Finances' by default|
+| Cert              | No        | The certificate to use for the connection, you can set it as 'SKIP' to ignore certificate validation|
+| akahu_app_id      | No        | App ID for Akahu - should look like: app_token_...|
+| akahu_auth_token  | No        | User auth token for Akahu - should look like: user_token...|
 
 Example:
 
@@ -54,4 +56,6 @@ Password: password
 Encrypt Password: ''
 File: ab7c8d8e-048b-41b1-a9cf-13f0679edc0b
 Cert: 'SKIP'
+akahu_app_id: app_token_abcdefghijkl00012342345
+akahu_auth_token: Bearer user_token_abcdefghijkl00012342345
 ```

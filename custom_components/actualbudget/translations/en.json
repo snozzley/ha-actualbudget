@@ -12,7 +12,9 @@
           "file": "file id",
           "skip_validate_cert": "Skip certificate validation",
           "cert": "certificate",
-          "unit": "unit"
+          "unit": "unit",
+          "akahu_app_id": "App token ID for Akahu",
+          "akahu_auth_token": "Auth token for Akahu"
         },
         "data_description": {
           "endpoint": "The endpoint of the actualbudget server",
