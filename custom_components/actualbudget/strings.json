@@ -23,8 +23,8 @@
           "file": "The file id of the actualbudget server",
           "cert": "The optional certificate of the actualbudget server",
           "unit": "The currency of the actualbudget server",
-          "akahu_id": "app_token_...",
-          "akahu_auth": "Bearer user_token..."
+          "akahu_app_id": "app_token_...",
+          "akahu_auth_token": "Bearer user_token..."
         }
       }
     },

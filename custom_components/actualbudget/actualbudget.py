@@ -246,15 +246,19 @@ class ActualBudget:
             "authorization": self.akahu_auth_token,
             "X-Akahu-Id": self.akahu_app_id
         }
-        _LOGGER.debug("run_akahu_bank_sync_sync - Syncing: %s",sync_days) 
+        _LOGGER.debug("run_akahu_bank_sync_sync - Syncing: %s Days, Categories: %s",sync_days, sync_categories) 
         with self._lock:  # Ensure only one thread enters at a time
             session = self.get_session()
             ruleset = get_ruleset(session)
             #self.actual.sync()
             # Start by getting a list of accounts
             url = "https://api.akahu.io/v1/accounts"
+
             response = requests.get(url, headers=headers)
+            #Should prob do some response handling here, but for now this should log the response code. i.e. 200,401 etc
+            _LOGGER.debug("response: %s",response)
             json_object = json.loads(response.text)
+
             
             # For each account in Akahu
             # We will loop over every account, then get every transaction for that account
