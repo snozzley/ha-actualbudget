@@ -304,7 +304,7 @@ class ActualBudget:
                     # For each transaction returned, we're going to match or create in Actual
                     for transaction in transjson_obj["items"]:
                         trans_id = transaction["_id"]
-                        trans_date = datetime.datetime.strptime(transaction["date"], "%Y-%m-%dT%H:%M:%S.%f%z").date()
+                        trans_date = datetime.datetime.strptime(transaction["date"], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone().date()
                         trans_desc = transaction["description"]
                         trans_amount = transaction["amount"]
                         trans_merchant_summary = None
